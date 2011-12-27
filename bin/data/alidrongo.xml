@@ -5628,9 +5628,6 @@
   <possibly_sensitive>false</possibly_sensitive>
   <contributors/>
 </status>
-
-<?xml version="1.0" encoding="UTF-8"?>
-<statuses type="array">
 <status>
   <created_at>Sat Feb 28 20:47:08 +0000 2009</created_at>
   <id>1263184879</id>
@@ -11252,9 +11249,6 @@
   <place/>
   <contributors/>
 </status>
-
-<?xml version="1.0" encoding="UTF-8"?>
-<statuses type="array">
 <status>
   <created_at>Mon Feb 16 20:31:02 +0000 2009</created_at>
   <id>1216506480</id>
@@ -16758,9 +16752,6 @@ pe you have been doing something constructive like making a snowman</text>
   <place/>
   <contributors/>
 </status>
-
-<?xml version="1.0" encoding="UTF-8"?>
-<statuses type="array">
 <status>
   <created_at>Sat Feb 07 19:30:23 +0000 2009</created_at>
   <id>1187016065</id>
@@ -22207,9 +22198,6 @@ pe you have been doing something constructive like making a snowman</text>
   <place/>
   <contributors/>
 </status>
-
-<?xml version="1.0" encoding="UTF-8"?>
-<statuses type="array">
 <status>
   <created_at>Sat Jan 24 11:07:14 +0000 2009</created_at>
   <id>1144373289</id>

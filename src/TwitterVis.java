@@ -32,6 +32,7 @@ public class TwitterVis extends PApplet {
 	private AppConfig config;
 	private XMLElement xml;
 	private ArrayList<AliTweet> tweets = new ArrayList<AliTweet>();
+	private ArrayList<MonthsTweets> months = new ArrayList<MonthsTweets>();
 	private boolean displayTweets = false;
 	private PFont font;
 	private int counter = 0;
@@ -44,6 +45,10 @@ public class TwitterVis extends PApplet {
 	private int monthPos = 0;
 	private int tweetYPos = 0;
 	private int showCount = 0;
+	private int circleCounter = 0;
+	private int rotationCount = -1;
+	private int tweetCount = 0;
+	
 
 	public void setup() {
 		frameRate(100);
@@ -63,6 +68,14 @@ public class TwitterVis extends PApplet {
 			XMLElement created_at = statuses[i].getChild("created_at");
 			tweet.status = text.getContent();
 			tweet.createdAt = created_at.getContent();
+		
+			String[] list = tweet.createdAt.split(" ");
+			String year = list[list.length - 1];
+			String month = list[1];
+			String day = list[0];
+			tweet.year = year;
+			tweet.day = day;
+			tweet.month = month;
 			tweets.add(tweet);
 		}
 		counter = tweets.size() - 1;
@@ -70,8 +83,29 @@ public class TwitterVis extends PApplet {
 				+ "_" + minute() + "_" + second() + ".mov", 30,
 				MovieMaker.JPEG, MovieMaker.MEDIUM);
 		print("parsing complete:" + hour() + ":" + minute() + ":" + second());
-		showTweets();
-		recording = true;
+		//showTweets();
+		
+		//sortTweets();
+		
+		recording = false;
+	}
+
+	private void sortTweets() {
+	
+		String currMonth = "";
+		MonthsTweets month = new MonthsTweets();
+		months = new ArrayList<MonthsTweets>();
+		for (int i = tweets.size()-1; i>=0; i--) {
+			AliTweet t = tweets.get(i);
+			if (t.month!=currMonth){
+				month = new MonthsTweets();
+				month.monthName = t.month;
+			}
+			month.tweets.add(t);
+			months.add(month);
+			
+		}
+		
 	}
 
 	private void showTweets() {
@@ -126,7 +160,6 @@ public class TwitterVis extends PApplet {
 
 	// fill the screen then scroll up
 	public void draw() {
-
 		// if (displayTweets) {
 		// println("counter:" + counter);
 		// for (int i = counter; i < counter+50; i++) {
@@ -143,85 +176,53 @@ public class TwitterVis extends PApplet {
 			if (year != currYear) {
 				currYear = year;
 			}
+			println("curr month:"+currMonth+"  month:"+month+" counter:"+counter);
 			if (!currMonth.contains(month)) {
 				// write name of last month
-
 				currMonth = month;
-
-				pushMatrix();
-				rotate(radians(90));
-				fill(255);
-				textSize(12);
-				text(currMonth, 0, 0 - ((monthPos * 20) + 15), 1);
-				popMatrix();
-
-				tweetYPos = 0;
-				// println("mpnth pos+");
+				println("rot up:"+rotationCount+"  tweetc:"+tweetCount);
+				rotationCount++;
+				tweetCount = 0;
+				
+				
+				println(rotationCount);
 
 				if (currMonth.contains("Jan")) {
 					pushMatrix();
 					rotate(radians(90));
 					fill(100);
 					textSize(18);
-					text(currYear, 50, 0 - ((monthPos * 20) + 8), 1);
+				//	text(currYear, 50, 0 - ((monthPos * 20) + 8), 1);
 					popMatrix();
 				}
 
 				monthPos++;
 			}
-			if (day != currDay) {
-				fill(30);
-				noStroke();
-				rect(width - 320, 0, 320, 50);
-				currDay = day;
-				fill(255);
-				textSize(40);
-				text(currMonth + " " + currYear, width - 215, 40);
-
-			}
-
-			float ratio = mouseY / height;
-			float realHeight = (tweets.size() * 18) * ratio;
-			textSize(16);
-			if (counter == tweets.size() - 1) {
-				fill(255);
-			} else {
-				fill(random(255), random(255), random(255));
-			}
-
-			float yPos = ((currHeight % TOTAL_TWEETS) * 18) + START_TWEETS_Y
-					+ 18;
-
-			text(t.status, 25, yPos);
-			// text("hi", 30,yPos);
-			// println("showing:" + t.status + "  ypos:" + yPos +
-			// "  cuurheight:"
-			// + currHeight);
-
-			if (currHeight % TOTAL_TWEETS == 0 && currHeight > 0) {
-				fill(30);
-				noStroke();
-				rect(0, START_TWEETS_Y, width, height - START_TWEETS_Y);
-
-			}
-
-			// draw month
-
 			
-
-			// only increment after the first tweet has shown 100 times
-			if (counter == tweets.size() - 1 && showCount < 100) {
-				showCount++;
-			} else {
-				drawTweet();
-				currHeight++;
-				counter--;
-			}
-
-			colorMode(RGB, 255);
-			stroke(255);
-			line(0, START_TWEETS_Y, width, START_TWEETS_Y);
-
+			//draw the tweet
+			
+			 pushMatrix();
+			    translate(width/2, height/2);  
+			    rotate(radians((rotationCount*10)+180));
+			    pushMatrix();
+				    // rotate(TWO_PI*.25);
+				    translate(0,100+(tweetCount));
+				    pushMatrix();
+					    rotate(TWO_PI*.25f);
+					//    text(currMonth, 30, 0);
+					    colorMode(HSB, 100);
+						fill(tweetCount, 100, 100);
+						noStroke();
+					    ellipse(0,0,3,3);
+				    popMatrix();
+				    //translate(0,100);
+				popMatrix();
+			    fill(255);
+			 popMatrix();
+			
+			 tweetCount++;
+			 counter--;
+	
 		}
 
 		try {
@@ -238,6 +239,57 @@ public class TwitterVis extends PApplet {
 
 	}
 
+	private void drawCircleTweets() {
+		
+		String currentMonth = "Jan";
+		for (int i = tweets.size()-1; i >=0; i--) {
+			
+			AliTweet tweet = tweets.get(i);
+		//	println("month:"+tweet.month+"  cuurmonth:"+currentMonth);
+			if (!tweet.month.contains(currentMonth)) {
+				currentMonth = tweet.month;
+				tweetCount = 0;
+				rotationCount++;
+				println("rot:"+rotationCount);
+			}
+			drawTweet();
+			tweetCount++;
+		}
+		
+	}
+
+	private void drawTweet() {
+	//	println("drawt");
+		translate(width*.5f, height*.5f);
+		pushMatrix();
+		
+		translate(0, -100);
+		rotate(radians(rotationCount));
+		
+		fill(random(255),random(255),random(255));
+		ellipse(0,0,5,5);
+		
+		popMatrix();
+		
+		
+	}
+
+	private AliTweet getTweet(int i) {
+		int theCount = 0;
+		for (int j = 0; j < months.size(); j++) {
+			MonthsTweets monthsTweets = months.get(j);
+			for (int k = 0; k < monthsTweets.tweets.size(); k++) {
+				AliTweet tweet = monthsTweets.tweets.get(k);
+				if (theCount==i){
+					return tweet;
+				}
+				theCount++;
+			}
+		}
+		
+		return null;
+	}
+/*
 	private void drawTweet() {
 
 		colorMode(HSB, 100);
@@ -248,7 +300,7 @@ public class TwitterVis extends PApplet {
 		ellipse((monthPos * 20) + 9, tweetYPos * .5f, 1, 1);
 		tweetYPos++;
 
-	}
+	}*/
 
 	public void mousePressed() {
 		println("mouse pressed");
@@ -272,7 +324,7 @@ public class TwitterVis extends PApplet {
 			if (recording) {
 				println("we are recording");
 				mm.finish();
-				println("movie record compolete");
+				println("movie record complete");
 				recording = false;
 			} else {
 				println("we are not recording");
