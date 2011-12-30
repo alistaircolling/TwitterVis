@@ -14,5 +14,6 @@
 	<classpathentry kind="lib" path="lib/verletphysics.jar"/>
 	<classpathentry kind="lib" path="lib/twitter4j-core-2.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/video.jar"/>
+	<classpathentry kind="lib" path="lib/colorutils.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
